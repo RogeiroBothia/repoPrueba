@@ -16,4 +16,8 @@ public class UserBasicDTO {
     @NotEmpty(message = "La Cedula es obligatoria")
     private String cedula;
     private String codigoPrograma;
+    @NotEmpty(message = "Debe registrar un Email")
+    private String username;
+    @NotEmpty(message = "Debe registrar un password")
+    private String password;
 }
