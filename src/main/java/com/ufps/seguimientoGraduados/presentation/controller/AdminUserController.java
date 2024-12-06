@@ -39,4 +39,5 @@ public class AdminUserController {
         userAppService.deleteUser(userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("1");
     }
+    
 }
