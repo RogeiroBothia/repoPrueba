@@ -17,10 +17,9 @@ public class UserAppServiceImpl implements UserAppService {
 
     @Autowired
     UserRepository userRepository;
-
-    //********************************* Metodos para el admin **************************************
+//********************************* Metodos para el admin **************************************
     @Override
-    public List<UserAppDTO> userNoAprobados(){
+    public List<UserAppDTO> userNoAprobados() {
         userRepository.findByIsNoUserTrue();
         List<UserApp> usersUnabled = userRepository.findByIsNoUserTrue();
         return usersUnabled.stream()
@@ -29,11 +28,11 @@ public class UserAppServiceImpl implements UserAppService {
                         user.getNombre(),
                         user.getCedula(),
                         user.getCodigoPrograma()
-                )) .collect(Collectors.toList());
+                )).collect(Collectors.toList());
     }
 
     @Override
-    public void activeUser(Long userId){
+    public void activeUser(Long userId) {
         Optional<UserApp> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             UserApp activatedUser = optionalUser.get(); //desempaquetar el optional
@@ -46,7 +45,7 @@ public class UserAppServiceImpl implements UserAppService {
     }
 
     @Override
-    public void deleteUser(Long userId){
+    public void deleteUser(Long userId) {
         Optional<UserApp> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             userRepository.deleteById(userId);
@@ -56,7 +55,7 @@ public class UserAppServiceImpl implements UserAppService {
     }
 
     @Override
-    public void updateCodigo(Long userId, UserBasicDTO codigoUser){
+    public void updateCodigo(Long userId, UserBasicDTO codigoUser) {
         Optional<UserApp> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             UserApp userBD = optionalUser.get(); //desempaquetar el optional
@@ -70,16 +69,43 @@ public class UserAppServiceImpl implements UserAppService {
     //********************************* Metodos para todos los Users **************************************
 
     @Override
-    public void createUser(UserBasicDTO userDTO){ //funciona
+    public void createUser(UserBasicDTO userDTO) { //funciona
         UserApp newUser = new UserApp();
         newUser.setNombre(userDTO.getNombre());
         newUser.setCedula(userDTO.getCedula());
         newUser.setCodigoPrograma(userDTO.getCodigoPrograma());
+        newUser.setUsername(userDTO.getUsername());
+        newUser.setPassword(userDTO.getPassword());
         newUser.setUser(false);
         newUser.setAdmin(false);
         newUser.setNoUser(true);
         userRepository.save(newUser);
     }
 
+    @Override
+    public Long loginUser(LoginDTO userDto) {
+        Optional<UserApp> userBD = userRepository.findUserByUsername(userDto.getUsername());
+        if (userBD.isPresent() && userDto.getPassword().equals(userBD.get().getPassword())) return userBD.get().getUserId();
+        else
+            return null;
+    }
+
+    @Override
+    public UserAppDTO viewProfile(Long userId){
+        Optional<UserApp> optionalUser = userRepository.findById(userId);
+        if(!optionalUser.isPresent()) throw new RuntimeException("No existe");
+        UserAppDTO userAppDTO = null;
+
+        userAppDTO.setUserId(optionalUser.get().getUserId());
+        userAppDTO.setNombre(optionalUser.get().getNombre());
+        userAppDTO.setCedula(optionalUser.get().getCedula());
+        userAppDTO.setCodigoPrograma(optionalUser.get().getCodigoPrograma());
+        userAppDTO.setUsername(optionalUser.get().getUsername());
+        userAppDTO.setPhotoUrl(optionalUser.get().getPhotoUrl());
+        userAppDTO.setResidencia(optionalUser.get().getResidencia());
+        userAppDTO.setEmpresario(optionalUser.get().isEmpresario());
+
+        return userAppDTO;
+    }
 
 }
