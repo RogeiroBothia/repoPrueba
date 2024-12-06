@@ -6,7 +6,7 @@ import com.ufps.seguimientoGraduados.presentation.dto.UserBasicDTO;
 import java.util.List;
 
 public interface UserAppService {
-    void activeUser(Long userId);
+     void activeUser(Long userId);
 
     void deleteUser(Long userId);
 
@@ -15,4 +15,8 @@ public interface UserAppService {
     void createUser (UserBasicDTO userDTO);
 
     List<UserAppDTO> userNoAprobados();
+
+    Long loginUser(LoginDTO userDto);
+
+    UserAppDTO viewProfile(Long userId);
 }
